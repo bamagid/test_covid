@@ -1,0 +1,153 @@
+body {
+    display: flex;
+    background-color:  #1d70ebdd;
+    color :rgb(58, 55, 55);
+    font-family: Verdana, Tahoma, sans-serif;
+    flex-direction: row;
+    height: 740px;
+    justify-content: space-around;
+    flex-wrap: nowrap;
+    align-items: center;
+    align-content: center;
+    font-weight: bold;
+}
+form.left {
+    display: flex;
+    background-color: #ffffff;
+    width: 40%;
+    height: 695px;
+    margin: auto 0 auto 15px;
+    flex-direction: column;
+    justify-items: center;
+    justify-content: left;
+    padding: 20px;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+}
+form.right {
+    display: flex;
+    background-color: #ffffff;
+    width: 40%;
+    height: 695px;
+    margin: auto 20px;
+    flex-direction: column-reverse;
+    justify-items: center;
+    justify-content: right;
+    padding: 20px;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+}
+form.filter {
+    display: flex;
+    background-color: #ffffff;
+    width: 40%;
+    height:695px;
+    margin: auto 15px auto 0;
+    flex-direction: column-reverse;
+    justify-items: center;
+    justify-content: right;
+    padding: 20px;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 6px;
+}
+.texte,.number,select{
+    outline: none;
+    border: 1px solid #ccc;
+    display: flex;
+    padding: 10px;
+    margin:0;
+    border-radius: 6px;
+}
+
+button{
+    background-color: #1d70ebdd;
+    color: white;
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.historique {
+    overflow-y: scroll;
+    display: flex;
+    background-color: #ffffff;
+    width: 90%;
+    height: 70%;
+    margin: 10px auto 50px auto;
+    flex-direction: column;
+    padding: 20px;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.historique_filtrer {
+    overflow-y: scroll;
+    display: flex;
+    background-color: #ffffff;
+    width: 90%;
+    height: 80%;
+    margin: 10px auto 20px auto;
+    flex-direction: column;
+    padding: 20px;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+label{
+margin: -2px 0;
+}
+span{
+    border: 1px solid #ccc;
+    margin: 0px 3px 10px 0px;
+    padding: 6px 8px 6px 8px;
+    border-radius: 6px;
+}
+.mt,.diarhee,.toux,.po {
+    display: flex;
+    justify-content: space-around;
+}
+button.supprimer {
+    background-color:  rgba(169, 36, 36, 0.952);
+    color: #DEE9F7;
+    border: 1px solid #ccc;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 6px;
+    cursor: pointer;
+}
+input.filtre{
+    position: sticky;
+    color: #010a16;
+    border: 1px solid #ccc;
+    font-size: larger;
+    padding: 15px;
+    margin:10px 0 0 0;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bolder;
+}
+button.reset {
+    position: sticky;
+    background-color: rgba(169, 36, 36, 0.952);
+    color: #DEE9F7;
+    border: 1px solid #ccc;
+    font-size: large;
+    padding: 20px;
+    margin: 10px 0 0px 0;
+    border-radius: 6px;
+    cursor: pointer;
+}
+button.filtre {
+    position: sticky;
+    background-color: #1d70ebdd;
+    color: #DEE9F7;
+    border: 1px solid #ccc;
+    font-size: large;
+    padding: 20px;
+    margin: 10px 0 10px 0;
+    border-radius: 6px;
+    cursor: pointer;
+}
