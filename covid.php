@@ -22,19 +22,15 @@ function calcul_score(){
     $date=date('j F Y');
     $heure=date('H:i:s');
     if (!preg_match("/^[a-zA-ZÀ-ÿ\s']+$/", $nom)) {
-        $erreur_nom="Veuillez saisir un nom valide.";
-        echo $erreur_nom;
+        echo "<p>Veuillez saisir un nom valide </p>";
         return false ;
     }elseif (!preg_match("/^[a-zA-ZÀ-ÿ\s']+$/", $prenom)) {
-        $erreur_prenom="Veuillez saisir un prénom valide.";
-        echo $erreur_prenom;
-    }  elseif ($poids < 8 || $poids > 150) {
-        $erreur_poids="Veuillez saisir un poids valide entre 8 et 150 kg.";
-        echo $erreur_poids;
+        echo "<p>Veuillez saisir un prénom valide </p>";
+    }  elseif (!is_numeric($poids >= 8 || $poids <= 150)) {
+        echo "<p> Veuillez saisir un poids valide entre 8 et 150 kg </p>";
         return false ;
-    }elseif ($temperature < 35 || $temperature > 42) {
-        $erreur_temperature ="Veuillez saisir une température valide entre 35 et 42 degrés Celsius.";
-        echo $erreur_temperature ;
+    }elseif (!is_numeric($temperature >= 35 || $temperature <= 42)) {
+        echo "<p>Veuillez saisir une température valide entre 35 et 42 degrés Celsius </p>" ;
         return false ;
     }else{
          if ($_POST['tranche_age']=== '2-14' || '60 et plus') {
@@ -67,24 +63,24 @@ function calcul_score(){
         }
         if ($_POST['tranche_age']=== '2-14') {
             if(!($_POST['poids'] < 10 || $_POST['poids'] > 50)){
-                $score += 10;}}
-        if ($_POST['tranche_age']=== '15-30') {
+                $score += 10;}
+            }elseif($_POST['tranche_age']=== '15-30') {
             if(!($_POST['poids'] < 45 || $_POST['poids'] > 80)){
-                $score += 10;}}
-        if ($_POST['tranche_age']=== '30-60') {
+                $score += 10;}
+            }elseif($_POST['tranche_age']=== '30-60') {
             if(!($_POST['poids'] < 50 || $_POST['poids'] > 85)){
-                $score += 10;}}
-        if ($_POST['tranche_age']=== '60 et plus') {
+                $score += 10;}
+            }elseif($_POST['tranche_age']=== '60 et plus') {
             if(!($_POST['poids'] < 60 || $_POST['poids'] > 100)){
                 $score += 10;}}
     // Déterminez la catégorie en fonction du score
     if ($score >= 70) {
-        $categorie = 'Critique';
+        $categorie = 'votre etat est Critique veuillez consulter un medecin en urgence';
     } 
     elseif($score >= 45 && $score <= 69) {
-        $categorie = 'Susceptible';
+        $categorie = "Vous etes susceptible d'avoir le covid veuillez consulter un medecin pour plus de details ";
     } else {
-        $categorie = 'Sain';
+        $categorie = 'vous etes sain.es prenez soins de vous et respecter les ';
     }
 
     // Créer un tableau associatif pour stocker les données du formulaire
@@ -126,8 +122,9 @@ if (isset($_POST['filtre']) && isset($_POST['date'])) {
 if (isset($_POST['supprimer'])) {
     $dateASupprimer = $_POST['date_a_supprimer'];
     // Parcourir l'historique et supprimer les éléments avec la date correspondante
-    foreach ($_SESSION['historique'] as $supprime => $date_a_Supprimer) {
-        if ($montant['date'] === $dateASupprimer) {
+    foreach ($_SESSION['historique'] as $supprime => $historique) {
+        $dateAffichee=$historique['date'];
+        if ($dateAffichee === $dateASupprimer) {
             unset($_SESSION['historique'][$supprime]);
         }
     }
@@ -156,7 +153,7 @@ if (isset($_POST['reset'])) {
                 <label for="nom">Nom :</label>
                 <input type="text" autocomplete="off" class="texte" name="nom" placeholder="Enrer votre nom" required><br>
                 <label for="prenom">Prénom :</label>
-                <input type="text" class="texte" utocomplete="off" name="prenom"  placeholder="Entrer votre prenom" required><br>
+                <input type="text" class="texte" autocomplete="off" name="prenom"  placeholder="Entrer votre prenom" required><br>
                 <label for="poids">Poids (kg) :</label>
                 <input type="number" class="number" name="poids" placeholder="exemple 50.10 ou 50" step="0.01" required><br>
             <div class="age">
@@ -266,14 +263,13 @@ if (isset($_POST['reset'])) {
            $historique = isset($_SESSION['filtrage']) ? $_SESSION['filtrage'] : $_SESSION['historique'];
            if (!empty($historique)) {
             echo "<h3>Date : " . $historique[0]['date'] . "</h3>";
-            
-            echo "<ul>";
+            echo "<ol>";
             foreach ($historique as $test) :
             ?>
                 <li>
                     <?php 
-                    echo "<p>heure : " . $test['heure'] . "</p>";
                     echo "<h2>Résultat du test COVID-19 pour " . $test['prenom'] . " " . $test['nom'] . ":</h2>";
+                    echo "<p>heure : " . $test['heure'] . "</p>";
                     echo "<p>poids : " . $test['poids'] . "Kg</p>";
                     echo "<p>Tranche d'âge : " . $test['tranche_age'] . "</p>";
                     echo "<p>temperature corporelle : " . $test['temperature'] . "°c</p>";
@@ -285,7 +281,7 @@ if (isset($_POST['reset'])) {
                     ?>
                 </li>
             <?php endforeach;
-            echo "</ul>";
+            echo "</ol>";
         } 
         else{
             echo "Aucun résultat trouvé pour la date sélectionnée.";
