@@ -7,83 +7,75 @@ if (!isset($_SESSION['historique'])) {
 if (!isset($_SESSION['filtrage'])) {
     $_SESSION['filtrage'] = [];
 }
-$erreur_nom = $erreur_prenom = $erreur_poids =  $erreur_temperature = "";
 function calcul_score(){
     // Collection des données du formulaire
     $nom = $_POST['nom'];
     $prenom = $_POST['prenom'];
     $poids = floatval($_POST['poids']);
     $tranche_age = $_POST['tranche_age'];
-    $temperature = floatval($_POST['temperature']);
+    $temperature =floatval($_POST['temperature']);
     $maux_tete = $_POST['maux_tete'];
     $diarrhee = $_POST['diarrhee'];
     $toux = $_POST['toux'];
     $perte_odorat = $_POST['perte_odorat'];
     $date=date('j F Y');
     $heure=date('H:i:s');
-    if (!preg_match("/^[a-zA-ZÀ-ÿ\s']+$/", $nom)) {
+    if(!preg_match("/^[a-zA-Z]+$/", $nom) || strlen($nom) <2 || strlen($nom) >50) {
         echo "<p>Veuillez saisir un nom valide </p>";
         return false ;
-    }elseif (!preg_match("/^[a-zA-ZÀ-ÿ\s']+$/", $prenom)) {
+    }elseif (!preg_match("/^[a-zA-Z\s']+$/", $prenom) || strlen($prenom) <2 || strlen($prenom) >50) {
         echo "<p>Veuillez saisir un prénom valide </p>";
-    }  elseif (!is_numeric($poids >= 8 || $poids <= 150)) {
+        return false;
+    }elseif ($poids < 8 || $poids >150) {
         echo "<p> Veuillez saisir un poids valide entre 8 et 150 kg </p>";
         return false ;
-    }elseif (!is_numeric($temperature >= 35 || $temperature <= 42)) {
+    }elseif ($temperature < 35 || $temperature > 42) {
         echo "<p>Veuillez saisir une température valide entre 35 et 42 degrés Celsius </p>" ;
         return false ;
-    }else{
-         if ($_POST['tranche_age']=== '2-14' || '60 et plus') {
+    }elseif(empty($_POST['maux_tete'])||empty($_POST['diarrhee'])||empty($_POST['toux'])||empty($_POST['perte_odorat'])){
+        echo "<p>Veuillez cocher 'oui' ou 'non' dans toutes les cages  </p>" ;
+        return false;
+    }else{ 
+        $score=0;
+         if ($_POST['tranche_age']=== '2-14' || $_POST['tranche_age']=== '60 et plus') {
             $score = 0;
             if ($maux_tete === 'oui') $score += 20;
             if ($diarrhee === 'oui') $score += 15;
             if ($toux === 'oui') $score += 30;
             if ($perte_odorat === 'oui') $score += 15;
-            if ($temperature>= 36.1 && $temperature>= 37.2){
-                $score+=0;
-            }else{$score+=10;}
+            if (!($temperature>= 36.1) && !($temperature>= 37.2)){$score+=10;}
             if ($maux_tete === 'non') $score += 5;
             if ($diarrhee === 'non') $score += 3;
             if ($toux === 'non') $score += 4;
             if ($perte_odorat === 'non') $score += 5;
-        }
-        if ($_POST['tranche_age']=== '15-30' || '30-60') {
+        }elseif ($_POST['tranche_age']=== '15-30' || $_POST['tranche_age']=== '30-60') {
             $score = 0;
             if ($maux_tete === 'oui') $score += 30;
-            if ($diarrhee === 'oui') $score += 10;
+            if ($diarrhee === 'oui'){$score+=10;}
             if ($toux === 'oui') $score += 20;
             if ($perte_odorat === 'oui') $score += 25;
-            if ($temperature>= 36.1 && $temperature>= 37.2){
-                $score+=0;
-            }else{$score+=10;}
+            if (!($temperature>= 36.1 ) && !($temperature>= 37.2)){$score+=10;}
             if ($maux_tete === 'non') $score += 2;
             if ($diarrhee === 'non') $score += 3;
             if ($toux === 'non') $score += 4;
             if ($perte_odorat === 'non') $score += 5;
         }
         if ($_POST['tranche_age']=== '2-14') {
-            if(!($_POST['poids'] < 10 || $_POST['poids'] > 50)){
-                $score += 10;}
+            if(!($_POST['poids'] < 10 || $_POST['poids'] > 50)){$score+=10;}
             }elseif($_POST['tranche_age']=== '15-30') {
-            if(!($_POST['poids'] < 45 || $_POST['poids'] > 80)){
-                $score += 10;}
+            if(!($_POST['poids'] < 45 || $_POST['poids'] > 80)){$score+=10;}
             }elseif($_POST['tranche_age']=== '30-60') {
-            if(!($_POST['poids'] < 50 || $_POST['poids'] > 85)){
-                $score += 10;}
+            if(!($_POST['poids'] < 50 || $_POST['poids'] > 85)){$score+=10;}
             }elseif($_POST['tranche_age']=== '60 et plus') {
-            if(!($_POST['poids'] < 60 || $_POST['poids'] > 100)){
-                $score += 10;}}
-    // Déterminez la catégorie en fonction du score
+            if(!($_POST['poids'] < 60 || $_POST['poids'] > 100)){$score+=10;}}
     if ($score >= 70) {
         $categorie = 'votre etat est Critique veuillez consulter un medecin en urgence';
     } 
     elseif($score >= 45 && $score <= 69) {
         $categorie = "Vous etes susceptible d'avoir le covid veuillez consulter un medecin pour plus de details ";
     } else {
-        $categorie = 'vous etes sain.es prenez soins de vous et respecter les ';
+        $categorie = 'vous etes sain.es prenez soins de vous et respecter les recommandations des medecins ';
     }
-
-    // Créer un tableau associatif pour stocker les données du formulaire
     $nouvelEnvoi =[
         'nom' => $nom,
         'prenom' => $prenom,
@@ -99,18 +91,14 @@ function calcul_score(){
         'date' => $date,
         'heure' =>$heure
     ];
-
-    // Ajouter le nouvel envoi à l'historique
     $_SESSION['historique'][] = $nouvelEnvoi;
    return $nouvelEnvoi;
    }
 } 
-
 if (isset($_POST['envoie'])) {
     $resultat = calcul_score($_POST['envoie']);
 }
 if (isset($_POST['filtre']) && isset($_POST['date'])) {
-    // Utilisez strtotime pour convertir la date en timestamp
     $datefiltrer = date('j F Y',strtotime($_POST['date']));
     $_SESSION['filtrage'] = [];
     foreach ($_SESSION['historique'] as $historique_filtrer) {
@@ -121,14 +109,12 @@ if (isset($_POST['filtre']) && isset($_POST['date'])) {
 }
 if (isset($_POST['supprimer'])) {
     $dateASupprimer = $_POST['date_a_supprimer'];
-    // Parcourir l'historique et supprimer les éléments avec la date correspondante
     foreach ($_SESSION['historique'] as $supprime => $historique) {
         $dateAffichee=$historique['date'];
         if ($dateAffichee === $dateASupprimer) {
             unset($_SESSION['historique'][$supprime]);
         }
     }
-    // Réindexez le tableau après la suppression pour garder la coherence
     $_SESSION['historique'] = array_values($_SESSION['historique']);
 }
 if (isset($_POST['reset'])) {
@@ -145,19 +131,16 @@ if (isset($_POST['reset'])) {
     <title>Test COVID-19</title>
     <link rel="stylesheet" href="covid.css">
 </head>
-<!-- <header class="header">
-     <h1>Test COVID-19</h1> 
-</header> -->
 <body>
     <form action="covid.php" method="POST" class="left">
                 <label for="nom">Nom :</label>
                 <input type="text" autocomplete="off" class="texte" name="nom" placeholder="Enrer votre nom" required><br>
                 <label for="prenom">Prénom :</label>
                 <input type="text" class="texte" autocomplete="off" name="prenom"  placeholder="Entrer votre prenom" required><br>
-                <label for="poids">Poids (kg) :</label>
+                <label for="poids">Quel est votre poids (kg) :</label>
                 <input type="number" class="number" name="poids" placeholder="exemple 50.10 ou 50" step="0.01" required><br>
             <div class="age">
-                <label for="tranche_age">Tranche dâge :</label>
+                <label for="tranche_age">Choisissez votre tranche dâge :</label>
                 <select class="tranche_age" name="tranche_age">
                         <option value="2-14">2-14</option>
                         <option value="15-30">15-30</option>
@@ -165,9 +148,9 @@ if (isset($_POST['reset'])) {
                         <option value="70-plus">60 et plus</option>
                 </select><br>
             </div>
-                <label for="temperature">Température corporelle (°C) :</label>
+                <label for="temperature">Quelle est votre température corporelle (°C) :</label>
                 <input type="number" class="number" name="temperature" placeholder="exemple 25.10 ou 25" step="0.01" required><br>
-                    <label>Maux de tête :</label>
+                    <label>Avez vous des maux de tête :</label>
                 <div class="mt">
                 <span>
                     <input type="radio" class="radio" name="maux_tete" value="oui" required>
@@ -179,7 +162,7 @@ if (isset($_POST['reset'])) {
                 </span>
                 </div>
                 
-                    <label>Diarrhée :</label>
+                    <label>Avez vous de la iarrhée :</label>
                 <div class="diarhee">
                 <span>
                     <input type="radio" class="radio" name="diarrhee" value="oui" required>
@@ -191,7 +174,7 @@ if (isset($_POST['reset'])) {
                 </span>
                 </div>
 
-                    <label>Toux :</label>
+                    <label>Toussez vous beaucoup :</label>
                 <div class="toux">
                 <span>
                     <input type="radio" class="toux_oui" name="toux" value="oui" required>
@@ -246,7 +229,7 @@ if (isset($_POST['reset'])) {
                        echo "<p>toux : ". $historique['toux'] ."</p>";
                        echo "<p>perte de l'odorat : ". $historique['perte_odorat'] . "</p>";
                        echo "<p>Score : ". $historique['score']."%". "</p>";
-                       echo "<p>Catégorie : ". $historique['categorie'] ."</p>";
+                       echo "<p>Notice : ". $historique['categorie'] ."</p>";
                       ?>
                     </li>
                 <?php }?>
